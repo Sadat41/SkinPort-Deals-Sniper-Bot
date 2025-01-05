@@ -10,15 +10,15 @@ import time
 DISCORD_BOT_TOKEN = "Your_Discord_Bot_Token"  # Replace with your bot token
 API_URL = "https://api.skinport.com/v1/sales/history"
 
-# Users to notify
+# Discord ssers to notify
 USER_IDS_TO_NOTIFY = [
-    373401655988846593,  # User 1 - sadat41
-    286166571741872129,  # User 2
-    721708148313817150,  # User 3
+    "User_ID_1",  # User 1 
+    "User_ID_2",  # User 2
+    "User_ID_3",  # User 3
 ]
 
 # Channel ID to notify
-CHANNEL_ID_TO_NOTIFY = 1265903772245168128 # trade channel
+CHANNEL_ID_TO_NOTIFY = "Discord_Channel_ID" # trade channel
 
 # Discord bot intents
 intents = discord.Intents.default()
