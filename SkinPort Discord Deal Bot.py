@@ -6,19 +6,27 @@ from skinport.enums import Currency, AppID, Locale
 import aiohttp
 import time
 
+
+
 # Key information
 DISCORD_BOT_TOKEN = "Your_Discord_Bot_Token"  # Replace with your bot token
 API_URL = "https://api.skinport.com/v1/sales/history"
 
-# Discord ssers to notify
+
+
+# Discord users to notify
 USER_IDS_TO_NOTIFY = [
     "User_ID_1",  # User 1 
     "User_ID_2",  # User 2
     "User_ID_3",  # User 3
 ]
 
+
+
 # Channel ID to notify
 CHANNEL_ID_TO_NOTIFY = "Discord_Channel_ID" # trade channel
+
+
 
 # Discord bot intents
 intents = discord.Intents.default()
@@ -26,9 +34,13 @@ intents.messages = True
 intents.members = True  # Required to fetch users
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Rate limit management
+
+
+# Rate limit management - Skinport has 8 requests every 5 min limit in place
 rate_limit_counter = 0
 rate_limit_start_time = time.time()
+
+
 
 
 # Fetch Historical Data
@@ -36,12 +48,14 @@ async def fetch_historical_data(market_hash_name):
     """Fetch historical data for an item from the Skinport API."""
     global rate_limit_counter, rate_limit_start_time
 
+    
     # Check if 5 minutes have passed to reset the counter
     if time.time() - rate_limit_start_time > 300:  # 5 minutes = 300 seconds
         print("Resetting rate limit counter...")
         rate_limit_counter = 0
         rate_limit_start_time = time.time()
 
+   
     # Enforce rate limit
     if rate_limit_counter >= 8:
         wait_time = 300 - (time.time() - rate_limit_start_time)
@@ -50,6 +64,7 @@ async def fetch_historical_data(market_hash_name):
         rate_limit_counter = 0
         rate_limit_start_time = time.time()
 
+   
     # Proceed with the request
     params = {
         "app_id": 730,
@@ -77,6 +92,7 @@ async def fetch_historical_data(market_hash_name):
         return None
 
 
+
 # Send Discord Notification
 async def send_discord_notification(users, channel_id, item, historical_data):
     """Send a DM to multiple users and post in a channel with historical data."""
@@ -87,6 +103,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         "90d": historical_data["last_90_days"]["avg"] if historical_data["last_90_days"] else None,
     }
 
+   
     # Normalize prices and calculate discount
     sale_price = item["salePrice"] / 100
     suggested_price = item["suggestedPrice"] / 100
@@ -95,17 +112,21 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     pattern = item.get("pattern", "Unknown")
     market_hash_name = item["marketHashName"]
 
-    # Skip if sale price is <= 100
-    if sale_price <= 100:
+   
+    
+    # Skip if sale price is <= (choose your value) i.e 100
+    if sale_price <= 100: # Choose any price
         print(f"Sale price for {market_hash_name} is <= 100. Skipping.")
         return
 
+    
     # Format avg prices, falling back to "N/A" if None
     avg_prices_formatted = {
         key: f"{value:.2f} CAD" if value is not None else "N/A"
         for key, value in avg_prices.items()
     }
 
+    
     # Create the embed
     embed = discord.Embed(
         title="🔥🚀 New Deal Detected 🔥🚀",
@@ -120,6 +141,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         color=0xFF5733,
     )
 
+    
     # Add fields for links
     embed.add_field(
         name="🔍 Inspect Link",
@@ -127,6 +149,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         inline=True,
     )
 
+    
     # Add historical average prices
     embed.add_field(
         name="📊 Avg Prices",
@@ -139,12 +162,14 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         inline=False,
     )
 
+    
     # Add footer with branding
     embed.set_footer(
         text="🚨 Powered by SkinPort Sniper",
         icon_url="https://skinport.com/favicon.ico",
     )
 
+    
     # Send to users
     for user_id in users:
         try:
@@ -155,6 +180,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         except Exception as e:
             print(f"Failed to send DM to user ID {user_id}: {e}")
 
+    
     # Send to channel
     try:
         channel = bot.get_channel(channel_id)
@@ -170,6 +196,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
         print(f"Failed to send message to channel ID {channel_id}: {e}")
 
 
+
 # Sale Feed Listener
 async def on_sale_feed(data):
     """Process sale feed data."""
@@ -182,26 +209,32 @@ async def on_sale_feed(data):
 
         print(f"Checking sale: {market_hash_name}, Sale Price: {sale_price:.2f} CAD")
 
-        # Skip if sale price is <= 100
+        
+        # Skip if sale price is <= 100 [You can choose any value of your choice]
         if sale_price <= 100:
             print(f"Sale price for {market_hash_name} is <= 100. Skipping.")
             continue
 
-        # Fetch historical data
+        
+        # Fetch historical data [Fetches data for 24 hours, 7,30,90 days)
         historical_data = await fetch_historical_data(market_hash_name)
 
+        
         if historical_data:
             avg_7d = historical_data[0].get("last_7_days", {}).get("avg", None)
             if avg_7d:
-                print(f"7-day average price for {market_hash_name} is {avg_7d:.2f} CAD")
+                print(f"7-day average price for {market_hash_name} is {avg_7d:.2f} CAD") # You can use different currency of your choice
 
+                
                 # Calculate discount
                 suggested_price = sale.get("suggestedPrice", 0) / 100
                 discount = ((suggested_price - sale_price) / suggested_price) * 100
 
                 print(f"Discount for {market_hash_name}: {discount:.2f}%")
 
-                # Add minimum discount condition (20%)
+                
+                
+                # Add minimum discount condition (20%) [Choose any value of your choice)
                 if discount < 20:
                     print(f"Discount {discount:.2f}% for {market_hash_name} is less than 20%. Skipping.")
                     continue
@@ -215,6 +248,7 @@ async def on_sale_feed(data):
                 print(f"No 7-day average price available for {market_hash_name}. Skipping notification.")
         else:
             print(f"Failed to fetch historical data for {market_hash_name}. Skipping notification.")
+
 
 
 
@@ -238,6 +272,9 @@ async def on_ready():
     finally:
         if client.ws:
             await client.disconnect()
+
+
+
 
 
 # Launch the bot
