@@ -69,5 +69,8 @@ Contributions are welcome! To contribute:
 git checkout -b feature-name
 ```
 3. Push your changes and open a pull request.
-
+   
+---
+## Contact:
+### Email: mdsadat@ualberta.ca
 
