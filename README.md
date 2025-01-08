@@ -39,8 +39,8 @@ pip install discord.py aiohttp skinport
 ```
 ### Step 3: Configure the Script
 #### Open the script file and replace:
-* 'DISCORD_BOT_TOKEN' with your Discord bot token.
-* Add your desired 'USER_IDS_TO_NOTIFY' and 'CHANNEL_ID_TO_NOTIFY'.
+* `DISCORD_BOT_TOKEN` with your Discord bot token.
+* Add your desired `USER_IDS_TO_NOTIFY` and `CHANNEL_ID_TO_NOTIFY`.
 
 ### Step 4: Run the Script
 ```bash
