@@ -24,14 +24,14 @@ USER_IDS_TO_NOTIFY = [
 
 
 # Channel ID to notify
-CHANNEL_ID_TO_NOTIFY = "Discord_Channel_ID" # trade channel
+CHANNEL_ID_TO_NOTIFY = "Discord_Channel_ID" # discord channel
 
 
 
 # Discord bot intents
 intents = discord.Intents.default()
 intents.messages = True
-intents.members = True  # Required to fetch users
+intents.members = True 
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 
@@ -50,7 +50,7 @@ async def fetch_historical_data(market_hash_name):
 
     
     # Check if 5 minutes have passed to reset the counter
-    if time.time() - rate_limit_start_time > 300:  # 5 minutes = 300 seconds
+    if time.time() - rate_limit_start_time > 300: 
         print("Resetting rate limit counter...")
         rate_limit_counter = 0
         rate_limit_start_time = time.time()
@@ -65,7 +65,7 @@ async def fetch_historical_data(market_hash_name):
         rate_limit_start_time = time.time()
 
    
-    # Proceed with the request
+    
     params = {
         "app_id": 730,
         "currency": "CAD",
@@ -114,20 +114,20 @@ async def send_discord_notification(users, channel_id, item, historical_data):
 
    
     
-    # Skip if sale price is <= (choose your value) i.e 100
+    # Skip if sale price is <= (choose your value) 
     if sale_price <= 100: # Choose any price
         print(f"Sale price for {market_hash_name} is <= 100. Skipping.")
         return
 
     
-    # Format avg prices, falling back to "N/A" if None
+   
     avg_prices_formatted = {
         key: f"{value:.2f} CAD" if value is not None else "N/A"
         for key, value in avg_prices.items()
     }
 
     
-    # Create the embed
+    # embed
     embed = discord.Embed(
         title="🔥🚀 New Deal Detected 🔥🚀",
         description=(
@@ -142,7 +142,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     )
 
     
-    # Add fields for links
+    # fields for links
     embed.add_field(
         name="🔍 Inspect Link",
         value=f"[Inspect in Game]({item.get('link', 'N/A')})",
@@ -150,7 +150,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     )
 
     
-    # Add historical average prices
+    # historical average prices
     embed.add_field(
         name="📊 Avg Prices",
         value=(
@@ -163,7 +163,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     )
 
     
-    # Add footer with branding
+    
     embed.set_footer(
         text="🚨 Powered by SkinPort Sniper",
         icon_url="https://skinport.com/favicon.ico",
@@ -277,6 +277,6 @@ async def on_ready():
 
 
 
-# Launch the bot
+
 if __name__ == "__main__":
     bot.run(DISCORD_BOT_TOKEN)
