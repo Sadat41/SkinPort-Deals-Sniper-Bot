@@ -1,4 +1,4 @@
-# SkinPort Deal Notifier Bot
+# SkinPort Deal Sniper Bot
 
 A **Python** script that leverages the **SkinPort API** and **Discord Bot API** to monitor **SkinPort’s live Sale Feed** for deals on CS2 items. The bot evaluates deals dynamically based on a configurable **discount percentage** and historical price data, then sends detailed notifications to Discord users and channels.
 
