@@ -8,7 +8,7 @@ import time
 
 
 
-# Key information
+# Key information ---> Important
 DISCORD_BOT_TOKEN = "Your_Discord_Bot_Token"  # Replace with your bot token
 API_URL = "https://api.skinport.com/v1/sales/history"
 
@@ -28,7 +28,7 @@ CHANNEL_ID_TO_NOTIFY = "Discord_Channel_ID" # discord channel
 
 
 
-# Discord bot intents
+
 intents = discord.Intents.default()
 intents.messages = True
 intents.members = True 
@@ -43,13 +43,13 @@ rate_limit_start_time = time.time()
 
 
 
-# Fetch Historical Data
+#Historical Data
 async def fetch_historical_data(market_hash_name):
     """Fetch historical data for an item from the Skinport API."""
     global rate_limit_counter, rate_limit_start_time
 
     
-    # Check if 5 minutes have passed to reset the counter
+    
     if time.time() - rate_limit_start_time > 300: 
         print("Resetting rate limit counter...")
         rate_limit_counter = 0
@@ -104,7 +104,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     }
 
    
-    # Normalize prices and calculate discount
+    # Discount
     sale_price = item["salePrice"] / 100
     suggested_price = item["suggestedPrice"] / 100
     discount = ((suggested_price - sale_price) / suggested_price) * 100
@@ -127,7 +127,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     }
 
     
-    # embed
+    
     embed = discord.Embed(
         title="🔥🚀 New Deal Detected 🔥🚀",
         description=(
@@ -142,7 +142,7 @@ async def send_discord_notification(users, channel_id, item, historical_data):
     )
 
     
-    # fields for links
+    
     embed.add_field(
         name="🔍 Inspect Link",
         value=f"[Inspect in Game]({item.get('link', 'N/A')})",
@@ -216,7 +216,7 @@ async def on_sale_feed(data):
             continue
 
         
-        # Fetch historical data [Fetches data for 24 hours, 7,30,90 days)
+        # [Fetches data for 24 hours, 7,30,90 days)
         historical_data = await fetch_historical_data(market_hash_name)
 
         
@@ -226,7 +226,7 @@ async def on_sale_feed(data):
                 print(f"7-day average price for {market_hash_name} is {avg_7d:.2f} CAD") # You can use different currency of your choice
 
                 
-                # Calculate discount
+                # Calculates discount
                 suggested_price = sale.get("suggestedPrice", 0) / 100
                 discount = ((suggested_price - sale_price) / suggested_price) * 100
 
@@ -234,7 +234,7 @@ async def on_sale_feed(data):
 
                 
                 
-                # Add minimum discount condition (20%) [Choose any value of your choice)
+                # Add minimum discount condition (e.g. 20%) [Choose any value of your choice)
                 if discount < 20:
                     print(f"Discount {discount:.2f}% for {market_hash_name} is less than 20%. Skipping.")
                     continue
@@ -252,7 +252,7 @@ async def on_sale_feed(data):
 
 
 
-# Discord Bot Parameters
+
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user}")
